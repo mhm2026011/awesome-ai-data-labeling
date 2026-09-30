@@ -1,4 +1,4 @@
-# Awesome AI-Assisted Scientific Data Labeling
+# Comparative Analysis of AI-Assisted and Manual Data Labeling Accuracy Across Scientific Datasets
 
 A curated collection of research papers, datasets, tools, implementations, and learning resources comparing AI-assisted and manual data labeling accuracy across scientific datasets.
 
