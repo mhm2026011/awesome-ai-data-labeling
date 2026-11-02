@@ -1,0 +1,5 @@
+data_c10h/
+*.npz
+*.npy
+__pycache__/
+results_model/

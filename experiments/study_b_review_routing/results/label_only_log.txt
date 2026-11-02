@@ -1,0 +1,43 @@
+rows 539910 attention rows 25710 idx range -99999 9999
+annotators with attention acc < 0.75: 16
+no_exclusion {'exact_match': False, 'items_differing': 2834, 'total_judgments': 514200, 'n_min': 50, 'n_max': 63}
+exclude_attn_below_75 {'exact_match': True, 'items_differing': 0, 'total_judgments': 511000, 'n_min': 47, 'n_max': 63}
+{
+  "counts_npy_total": 511000,
+  "rule_that_reproduces_counts": "exclude_attn_below_75",
+  "reference": {
+    "plurality_equals_original": 0.9921,
+    "n_disagree": 79,
+    "plurality_ties": 3
+  },
+  "manual_single_draw_vs_original": {
+    "mean": 0.9523207,
+    "sd": 0.001820883611636706,
+    "p2_5": 0.9488,
+    "p97_5": 0.9558025
+  },
+  "manual_single_draw_vs_plurality": {
+    "mean": 0.9544196999999999,
+    "sd": 0.0018657070436627456,
+    "p2_5": 0.9507975,
+    "p97_5": 0.9582
+  },
+  "panel_plurality_acc_vs_original": 0.9921,
+  "per_annotator": {
+    "n_annotators": 2555,
+    "items_per_annotator_min": 200,
+    "items_per_annotator_median": 200.0,
+    "items_per_annotator_max": 200,
+    "acc_mean": 0.9523600782778864,
+    "acc_sd": 0.02871135159222372,
+    "acc_p5": 0.905,
+    "acc_p50": 0.96,
+    "acc_p95": 0.985
+  },
+  "item_level": {
+    "mean": 0.9523460386492748,
+    "items_below_50pct": 122,
+    "items_below_80pct": 609,
+    "items_all_correct": 4392
+  }
+}
