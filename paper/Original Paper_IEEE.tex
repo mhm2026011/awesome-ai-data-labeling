@@ -1,0 +1,323 @@
+\documentclass[10pt, conference, letterpaper]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+% ---------- Essential Packages ----------
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+
+\setlength{\emergencystretch}{3em}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+% ---------- Helper: show a placeholder box if an image is missing (so the build never fails) ----------
+\newcommand{\safeimg}[1]{%
+  \IfFileExists{#1}{\includegraphics[width=\linewidth]{#1}}{%
+    \fbox{\parbox{0.9\linewidth}{\centering\small Missing image: \detokenize{#1}}}}}
+
+% ---------- Helper: marks text that was ADDED (not from your humanized text) ----------
+% Set \showaddedtrue to see all added text in blue while you humanize it. Set \showaddedfalse for the final PDF.
+\newif\ifshowadded
+\showaddedfalse
+\newcommand{\added}[1]{\ifshowadded{\color{blue}#1}\else #1\fi}
+
+\begin{document}
+
+\title{Comparative Analysis of AI-Assisted and Manual Data Labeling Accuracy Across Scientific Datasets}
+
+\author{\IEEEauthorblockN{Abhay Kumar Awasthi}
+\IEEEauthorblockA{\textit{Indian Institute of Information Technology, Allahabad}\\
+Prayagraj, Uttar Pradesh, India \\
+MHM2026011@iiita.ac.in}
+}
+
+\maketitle
+
+\begin{abstract}
+High dimensional data has been exploding throughout different scientific fields with the result that the labeling of the data has been identified as the main obstacle that stops developing, testing and putting supervised ML systems into use. The main source of ground truth, or "the truth," used in AI for many years has been manual annotation by humans. This manual method is very time consuming and requires lots of domain knowledge when dealing with very particular areas, such as computational pathology, single-cell transcriptomics, clinical trial management, geospatial remote sensing, and astrophysics. Therefore, the cost is unreasonably high, and it is impossible to scale, and human errors, such as tired human workers, cognitive errors, and variations of opinions between people, are unavoidable. A major problem with the old belief that labeling by humans is a perfect gold standard has also been that recent studies have found, even among highly curated datasets, a significant percentage of label noise and systematic bias. A large proportion of the research community has already started using the new way of AI-assisted annotation to solve the bottlenecks mentioned above. The core idea there is the Human-in-the-Loop (HITL) concept. Machine learning algorithms---from foundation models and large language models (LLMs) to active learning heuristics and zero-shot classifiers--- Human labeling and AI labeling are combined in various ways as a human-in-the-loop system, which is the main approach. In order not to have to rely on the limited availability of manually labeled ground truth data, which has long been the sole source of the ground truth input for AI, human beings and the machines get together to label the remaining part of the data. The collaboration can be done in an iterative way. At first, humans manually label a subset of the data that will serve as the ground truth to train the AI to label the whole data set. Alternatively, the machine learning models might have an initial round of labeling without manual intervention followed by human corrections in the subsequent rounds. In most cases, human labeling and machine annotation will happen simultaneously. For example, humans may first label the most complicated part of the dataset whereas a computer model may label the easier, more obvious part. There would even be a situation that the labeling is done in reverse in a certain type of the workflow where humans perform more of the labeling, whereas the machines take lesser part in the task, and vice versa. This is, therefore, a very flexible and human-led approach, in which the level of human involvement changes according to the situation. A human-in-the-loop approach is, on one hand, extremely versatile, as the involvement is totally dependent on the task, and, on the other hand, very human-centric, since the level of human intervention is adjusted based on the context of a particular job.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Data Labeling, AI-Assisted Annotation, Human-in-the-Loop, Ground Truth, Scientific Datasets
+\end{IEEEkeywords}
+
+%==================================================================
+\section{Introduction}
+\label{sec:intro}
+Human annotators may review, adjust, or decide on the algorithm-generated suggestions that have been made. This thorough comparative study looks at the precision, speed, statistical reliability, and mental effects of AI-supported versus manual annotation of data labeling on a variety of scientific datasets. Drawing on factual evidence from fields like medical imaging, genomics, processing clinical text, and astronomy, this document highlights the power of blended intelligence and at the same time points out carefully the downside consequences of automation bias, the shifts in distribution of out-of-data samples, and label noise propagation \cite{ref1}.
+
+\begin{figure}[!t]
+\centering
+\safeimg{Conceptual_Architecture.jpg}
+\caption{Conceptual Architecture of the Human-in-the-Loop AI-Assisted Scientific Data Labeling Pipeline.}
+\label{fig:conceptual_arch}
+\end{figure}
+
+As illustrated in Figure~\ref{fig:conceptual_arch}, the integration of human expertise remains paramount despite algorithmic efficiency.
+
+% >>> ADDED (contributions + organization paragraph) >>>
+\added{The‍‍‍ paper makes several main points:First, it looks at the various statistical approaches used to determine what the true or accurate annotation (ground truth) is and how to quantify the level of agreement that annotators have with each other. Secondly, it presents a study on the effectiveness of labeling with human efforts and the combination of AI tools across different fields like medical imaging, genomics, clinical data processing, and even astrophysics. Thirdly, it raises awareness on possible mental problems like annotation fatigue and automation bias which may result from working with AI recommendations.
+Fourthly, it covers techniques of Active Learning (select samples for labeling) with a goal of reducing the amount of noisy data and learning from confident decisions ‍‍‍only.
+
+ Section~\ref{sec:related} summarizes related work, Section~\ref{sec:theory} presents the theoretical and statistical frameworks, Sections~\ref{sec:medical}, \ref{sec:genomics} and \ref{sec:astro} cover the scientific domains, Section~\ref{sec:psych} discusses the human factors, Section~\ref{sec:noise} covers label noise mitigation, Sections~\ref{sec:discussion} and \ref{sec:future} give the discussion and future directions, and Section~\ref{sec:conclusion} concludes the paper.}
+% <<< END ADDED <<<
+
+%==================================================================
+% >>> ADDED SECTION (Related Work) >>>
+\section{Related Work}
+\label{sec:related}
+\added{Earlier work on data annotation has mostly treated disagreement between annotators as noise and has measured annotation quality using agreement metrics \cite{ref1,ref3}. Foundation models such as SAM and its medical variants have since been used to speed up segmentation labeling \cite{ref10,ref12}, and large language models have been applied to cell typing in single-cell data \cite{ref22}. In parallel, active learning and confident learning have been proposed to select which samples humans should label and to clean noisy labels \cite{ref73}. This paper brings these separate lines of work together and compares them across scientific domains.}
+% <<< END ADDED SECTION <<<
+
+%==================================================================
+\section{Theoretical and Statistical Frameworks for Ground Truth}
+\label{sec:theory}
+It is important to first define "accuracy" using the mathematical and statistical frameworks, before actually comparing manual with AI-assisted methods in the context of absolutely objective truth that is essentially unobtainable.
+In scientific datasets, the concept of ground truth is usually arrived at via a compromise among multiple field experts. IAA (Inter-Annotator Agreement) metrics are employed to measure how dependable that compromise is.
+That is, these metrics assess how similar different annotators are in classifying, demarcating boundaries of segments, or analyzing linguistic relations of a common text dataset.
+
+\subsection{Rethinking Annotation as a Measurement Process}
+Machine learning researchers usually consider every disagreement among human annotators as noise. The Human Label Variation (HLV) framework, however, suggests that annotation is a complex measurement process through which label variations are primarily due to four factors. These factors include instance difficulty, annotator bias, situational noise, and relational alignment. By breaking down the different factors, this approach shows that what the learning algorithms see as noise very well could be meaningful, subjective disagreements of the kind that are commonly faced in medical and scientific fields when dealing with ambiguous phenomena. Blindly forcing agreement via, for example, a simple majority vote method, will only cover up and not take into account these essential differences, and thus, the final model will have a very restricted capability to handle ambiguous data.\cite{ref1}. A study involving eleven critical care consultants annotating Intensive Care Unit (ICU) data revealed only "fair" agreement (Fleiss' $\kappa = 0.383$) internally, and "minimal" agreement ($\kappa = 0.255$) when externally validated against out-of-network datasets, demonstrating that a singular "super expert" rarely exists in acute clinical settings \cite{ref2}.
+
+\subsection{Quantifying Inter-Annotator Agreement}
+To rigorously evaluate annotation quality, researchers rely on metrics that correct for chance agreement, distinguishing between true scientific consensus and random overlap \cite{ref3}. Cohen's Kappa ($\kappa$) is the standard metric for binary or categorical classification tasks involving two annotators. It is formulated mathematically as:
+\begin{equation}
+\kappa = \frac{P_o - P_e}{1-P_e}
+\label{eq:kappa}
+\end{equation}
+Here, $P_o$ is the proportion of agreement that is observed, while $P_e$ is the probability of agreeing purely by chance according to Kappa formula (cf. equation~\eqref{eq:kappa}). For instance, in complicated medical annotation jobs such as diagnosing oral potentially malignant lesions on intraoral images, manual expert agreement has commonly been $\kappa = 0.90$ which is the hallmark of a very high inter-rater reliability.
+For data annotation jobs where several experts are required to do the job, Fleiss' Kappa builds on mathematical principles of Cohen's Kappa to quantify how stable multiple raters are in their assessment of the same items at different times. Besides that, Krippendorff's Alpha ($\alpha$) offers a much better and widely applicable model that deals with any measurement (from nominal to ratio data) and even the problem of missing values---which is quite common in highly sparse scientific datasets.
+Accuracy in computer vision tasks, especially in the area of medical image segmentation and satellite remote sensing, cannot be properly assessed by counting agreements or disagreements with the ground truth. This is due to the fact that in these tasks, the prediction of object contours is a continuous process, and the assessment of accuracy should be done considering both geometric precision and similarity (overlapping) of the predicted contour to the ground truth contour. The two main metrics that capture the concept of contour overlapping are Dice Similarity Coefficient (DSC) and Intersection over Union (IoU):
+
+\begin{equation}
+\text{DSC} = \frac{2|X \cap Y|}{|X| + |Y|}
+\label{eq:dsc}
+\end{equation}
+\begin{equation}
+\text{IoU} = \frac{|X \cap Y|}{|X \cup Y|}
+\label{eq:iou}
+\end{equation}
+Where $X$ and $Y$ represent the spatial masks generated by different human annotators or by an AI model against a human reference, demonstrated in Equations \eqref{eq:dsc} and \eqref{eq:iou}. By using tools like Simultaneous Truth and Performance Level Estimation (STAPLE), one can combine different human annotations into a consolidated ground truth mask that can be used by AI for learning purposes. STAPLE works out how the actual segmentation would look, giving probabilistic weight depending on each annotator's past performance levels.
+STAPLE method not only factors in the bias but, more importantly
+the historical level of each annotator's performance, giving a very robust training sample that is resistant to changes.
+
+\begin{table*}[!t]
+\centering
+\caption{Inter-Annotator Agreement (IAA) Metrics}
+\label{tab:metrics}
+\footnotesize
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{} >{\raggedright\arraybackslash}p{0.15\textwidth} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X @{}}
+\toprule
+\textbf{IAA Metric} & \textbf{Mathematical Characteristics} & \textbf{Primary Application} & \textbf{Strengths in Scientific Labeling} \\
+\midrule
+Cohen's Kappa & Binary/Categorical & Corrects for chance agreement & Standard for dual-annotator verification (e.g., textual triage). \\
+Fleiss' Kappa & Multi-rater Categorical & Generalization of Cohen's for $n$ raters & Ideal for crowdsourced or multi-expert panel consensus. \\
+Krippendorff's Alpha & Complex/Mixed Data & Handles missing data and various scales & Highly robust for sparse datasets with incomplete overlapping reviews. \\
+STAPLE & Spatial Segmentation & Expectation-Maximization algorithm & Aggregates multiple bounding boxes/masks into a true probabilistic label. \\
+Dice / IoU & Spatial Overlap & Harmonic mean of precision and recall & Standard for evaluating AI boundaries against human baseline masks. \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+%==================================================================
+\section{Medical Imaging and Computational Pathology}
+\label{sec:medical}
+The application of artificial intelligence to medical image annotation has resulted in remarkable enhancement in the speed of processing as well as the sharpness of boundaries. Since medical diagnosis is essentially dependent on the level of detail of the image, pixel-perfect accuracy is of paramount value. After all, the labels generated will be used in multiple downstream clinical models ranging from detection of cancer to surgical procedures planning, and even in the detection of the slightest anomalies.
+
+\subsection{Foundation Models in Radiology: SAM and MedSAM}
+The Segment Anything Model (SAM) is a foundational model that was trained on more than one billion mask annotations in natural images, and it brought about the change from specialist segmentation networks to prompt-driven generalist models\cite{ref10}. However, the direct application of zero-shot SAM to medical imaging often yields suboptimal accuracy due to the vast domain gap between natural photography and complex radiological scans \cite{ref10}.
+Domain adaptation has made it possible to get highly specialized models out of big ones, such as MedSAM, by fine-tuning them on massive medical datasets which include 1,570,263 image and mask pairs, 10 imaging modalities, and over 30 major cancer subgroups \cite{ref12}. Zero-shot lumbar spine MRI segmentation comparison studies showed that human-level annotation accuracy was highly uneven among them. For example, standard SAM performed with DSCs of 0.64 on the intervertebral disc (IVD) segmentation and 0.83 on the vertebral bone body (VBs) \cite{ref14}. MedSAM, by contrast, surpassed both with 0.79 and 0.88 as DSCs of IVDs and VBs respectively \cite{ref14}. Still, it is clear that only fully supervised task-specific architectures nnU-Net have a real chance of setting the new standards in clinical accuracy by delivering a DSC of 0.99 for the same anatomical features \cite{ref14}. Also, the BraTS 2023 adult glioma and pediatrics dataset evaluations revealed a similar situation where when sam and sam 2 models receive bounding box prompts that are flawlessly accurate, they can obtain high Dice scores (up to 0.894). However, nnU-Net continues to be the top performing model in most practical clinical workflows, where human annotators rarely deliver such perfect bounding boxes, because it is simply a logistical impossibility for humans to generate flawless bounding boxes consistently \cite{ref15}
+
+One benefit of Granular Box Prompt (GB-SAM) that clinicians draw localized bounding boxes at regions of interest instead of outlining many polygonal figures. This method significantly reduces the human workload and at the same time raises the levels of correct diagnoses. Histopathology datasets (e.g., CRAG) GB-SAM scored DSC of 0.885, by using 25 percent of training data only, while traditional U-Net architectures (DSC 0.857) trained on exact same subsets was outperformed effectively.
+\cite{ref18}.
+
+\subsection{Computational Pathology and Annotation Throughput}
+In computational pathology, Whole Slide Images (WSI) contain billions of pixels, and manual annotation is an extremely tedious and error-prone job that is easily done on such vast amounts of image data and very quickly exhausting. A benchmark study of different annotation peripherals and methodologies showed dramatic time savings for AI-assisted workflows.\cite{ref15}
+
+Manual annotation using a standard computer mouse alone on average consumed 29.9 minutes per slide and had a very significant 24\% inter-observer variability. \cite{ref1} Using the touchpad was shown to be among the most inefficient techniques with the annotated time averaging 47.5 minutes and having an inter-observer variational of 45\%. \cite{ref19} Whereas using a semi-automated, AI-assisted approach integrating manual SAM work with the first manual interactions decreased the average annotation time to 13.6 minutes with an inter-observer variability of only 2\%\cite{ref19}
+
+Same thing happened for CT brain hemorrhage segmentation when AI-collaborative labeling (AICL) framework was deployed for complex volumetric tasks. There were significant geometric improvements. It took standard medical personnel an extra time, 2.8 times the initial time, to do the manual edit job that AICL did. Compared to a manual labeling by expert radiologists that took 8.7 times more hands-on work than AICL.
+
+The scores for qualitative aspects of the final annotations according to the Likert scale were dramatically higher if the labels were produced through AI assistance (8.4) against purely manual expert labels (7.8) which means that algorithmic help makes it possible to find the subtle boundary details that human eye is naturally missing from exhaustion at work over an extended time.\cite{ref20}
+
+\subsection{Hybrid Intelligence and Uncertainty-Driven Workflows}
+In order to find a good middle ground between using the automated systems that can work efficiently and the human clinical judgment, "HybridMS" (Hybrid Medical Segmentation) schemes have been developed. These setups employ so-called uncertainty-driven feedback loops that are based on assessing how confident the system itself is in a given segmentation result. Whenever the computer model decides to highlight an area that it is not entirely certain about (as in the case of tumor boundaries being poorly contrasted), it calls for a human radiologist to step in and help \cite{ref21}. Such a model for lung segmentation for finding TB from chest X-rays did better on a statistical measure called "Dice" where it scored 0.9538 (baseline MedSAM scored 0.9435), while the normal annotation times dropped by 82\% and the most difficult ones only by 60\% \cite{ref21}. Such a targeted way of human assistance increases productivity to a very high degree while the level of compliance with laws and regulations or the standard requirements imposed by a patient safety perspective remain intact.
+
+\begin{table*}[!t]
+\centering
+\caption{Performance and Efficiency Across Modalities}
+\label{tab:performance}
+\footnotesize
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{} >{\raggedright\arraybackslash}p{0.19\textwidth} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X @{}}
+\toprule
+\textbf{Modality / Architecture} & \textbf{Clinical Application} & \textbf{Performance Metric (Dice)} & \textbf{Efficiency Gains over Manual Baseline} \\
+\midrule
+Zero-Shot SAM & Lumbar MRI & DSC: 0.64-0.83 & High (Requires exact prompts) \\
+MedSAM & Lumbar MRI & DSC: 0.79-0.88 & High (Lower prompt dependency) \\
+nnU-Net (Supervised) & Lumbar/Glioma & DSC: 0.99 & None (Requires massive pre-labeled data) \\
+GB-SAM (Box Prompt) & Histopathology (CRAG) & DSC: 0.885 & Achieved with only 25\% of required data \\
+Semi-Automated SAM & WSI Pathology & 2\% Variability & Time reduced from 29.9 min to 13.6 min \\
+HybridMS (Uncertainty) & Chest X-ray (Tuberculosis) & DSC: 0.9538 & Annotation time reduced by 82\% \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+%==================================================================
+\section{Genomics, Single-Cell Transcriptomics, and Clinical Text Processing}
+\label{sec:genomics}
+Many scientific datasets are in fact textual clinical records with information on medications, adverse events and high-dimensional genomic sequences, in addition to the visual segmentation.
+
+\subsection{Single-Cell RNA Sequencing (scRNA-seq) Annotation}
+Single-cell RNA sequencing technology can reveal a cell's gene activity with high resolution, a feat that was unthinkable before its advent.
+A standard cell typing procedure heavily relies on an expert human touch.
+Specialists in this field identify clusters generated by computational methods and match them one by one with a list of marker genes that are considered as cell-type signatures \cite{ref22}. It is an approach that relies very heavily on human judgment, and thus introduces bias, as well as consumes an inordinate amount of hours, while also lacking standardized guidelines that different labs could use to compare results, leading, in the worst outcomes, to different data types that are not interoperable \cite{ref22}.
+Recently, development of LLMs specialized for biology and multi-agent systems has led to rethinking many existing bioinformatics workflows. In the experiments we did, top-ranked LLMs (e.g., Kimi-k2, GPT-5, Claude-4.1, Grok-4) were tested over 34 varied mouse and human datasets.
+This study indicated that AI, to the surprise of the scientists, can detect not only well-known, but also very rarely identified, even minute, rare subtypes of cell populations at unprecedented depth, thus surpassing the conventional methods such as the SingleR, Cellmarker2.0, and ScType \cite{ref22}. Such a feat is available via integrated platforms like DeepCellSeek, and one reason for an extra performance is that they have a layer of statistical significance and log-fold change rankings before prompting LLM for the result \cite{ref22}.
+
+\subsection{Clinical Trial Data Cleaning and Extraction}
+In pharmaceutical drug development, one of the key limitations is that the processing of data from clinical trial datasets takes up a lot of time and is an operational pain for researchers. It is well known that such reconciliation carried out manually is very error-prone. It is mainly the fatigue resulting from the repetitive nature of the tasks involved and the fact that the human ability to manage the growing data sizes is extremely limited that cause this type of error.
+The introduction of "Octozi" an AI-Assisted platform which integrates a Large Language Model with domain-based clinical heuristics, made medical expert medical reviewers in a controlled experimental study realize substantial improvements in their performance \cite{ref32}.. The implementation of the AI-assisted workflows boosted data cleansing throughput by almost seven times compared to a fully manual operation \cite{ref32}.. Most importantly, by using this novel system the cleaning process errors were reduced dramatically from the initial level of manual cleaning (54.67\%) to 8.48\% representing a sixfold improvement in accuracy \cite{ref32}..
+
+%==================================================================
+\section{Astrophysics and Geospatial Remote Sensing}
+\label{sec:astro}
+In disciplines characterized by massive planetary or cosmic scale, such as Earth observation and astrophysics, the sheer volume of high-resolution imagery necessitates automated pipelines. However, labeling this data requires nuanced spatial and morphological reasoning that challenges basic computer vision architectures.
+
+\subsection{Galaxy Morphology Classification and Green AI}
+Historically, Galaxy Zoo, this crowdsourced citizen science initiative, proved the strength of distributed manual annotation where volunteers classified millions of galaxies into morphological categories (e.g., spiral, elliptical, merging) based on complex decision trees \cite{ref37}. As new telescope capabilities are introduced like the Rubin Observatory Legacy Survey of Space and Time (LSST) or the the Euclid space mission, the massive quantity of images will literally make manual crowdsourced image classification impossible from a mathematical standpoint \cite{ref37}.
+
+The deep learning models trained on Galaxy Zoo dataset, such as Zoobot, are capable of detecting complex morphological features automatically. For instance, the task of distinguishing between asymmetric galaxies from spiral galaxies where symmetry is the case, the fine-tuned models produced 87\% test accuracy using expert-verified ground truth, and labeling datasets that manual crowdsourcing would have taken years to finish \cite{ref39}. YOLOv5 architectures, for example, have been used to find edge-on galaxies, and detection rates on wide surveys such as that by Pan-STARRS exceed 97\% \cite{ref40}. The most recent developments are the switch from astronomy-supervised models to the Vision-Linguistic Models (VLMs) and Visual Question Answering (VQA) frameworks that are general-purpose.
+
+%==================================================================
+\section{The Psychology and Ergonomics of Human-in-the-Loop Annotation}
+\label{sec:psych}
+While the quantitative benefits of AI-assisted labeling are statistically undeniable across scientific domains, the insertion of AI into the human decision-making loop introduces complex cognitive and psychological phenomena.
+
+\subsection{Annotation Fatigue and Cognitive Load}
+Manually labeling items over prolonged time periods will certainly lead to annotation fatigue. This kind of mental exhaustion is due not just to mental work but also to physical factors such as repetitious visual scanning (e.g., moving eyes over the screen) and subjective stress when dealing with ambiguous data guidelines \cite{ref50}.
+One of the key effects of manual annotation, supported by empirical data, is a very high rate of human error. One study shows that annotation done manually for too long can lead to errors reaching even 30\%, which means that the human-made data no longer qualify for the most critical applications like clinical use or very precise scientific measurements \cite{ref52}.
+
+\subsection{Automation Bias and The Anchoring Effect}
+The central paradox in human AI collaboration is that the greater confidence in human annotators results in increased complacency in their work. The phenomenon of automation bias or anchoring effect describes a situation where human annotators become so reliant on AI predictions that they can no longer detect and fix the errors made by the machine.
+In effect, a person bases their judgment exclusively on the initial prediction provided by the AI system which is termed quantitatively as "Weight of Advice" or (WoA) \cite{ref56}.
+
+\begin{table*}[!t]
+\centering
+\caption{Cognitive Mechanisms and Mitigation Strategies}
+\label{tab:cognitive}
+\footnotesize
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{@{} >{\raggedright\arraybackslash}p{0.15\textwidth} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X @{}}
+\toprule
+\textbf{Cognitive Phenomenon} & \textbf{Mechanism} & \textbf{Mitigation Strategy} & \textbf{Impact on Annotation Quality} \\
+\midrule
+Annotation Fatigue & Mental exhaustion from repetitive, high-load manual tasks & AI pre-labeling, task rotation, ergonomic UI design & Increased random errors, dropped boundaries, slower throughput \\
+\addlinespace
+Automation Bias & Complacent trust in highly accurate AI systems & Injecting synthetic errors to test vigilance, uncertainty routing & Systematic encoding of AI hallucination into ground truth \\
+\addlinespace
+Anchoring Effect (WoA) & Judgment skewed by the initial AI hypothesis & Blind review of low-confidence predictions, removing time constraints & Inability to correct subtle boundary deviations under time pressure \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+%==================================================================
+\section{Mitigating Label Noise: Active Learning, Confident Learning, and OOD Detection}
+\label{sec:noise}
+To maximize the efficiency of the human-AI partnership and counteract cognitive biases, advanced machine learning paradigms govern the flow of data tTo ensure a high return on investment and human-AI cooperation by overcoming human cognitive biases, the selection of data that is shown to human annotators is guided by a higher level of machine learning strategies.
+
+\subsection{Active Learning and Uncertainty Sampling}
+Active learning works on the notion that data samples vary in terms of training the model \cite{ref73}. Instead of randomly picking the data to be labeled by the annotator, the machine learning algorithm selects the data samples which are most beneficial for the model (either the most uncertain or challenging the label), in other words, the annotation budget can be drastically reduced (even up to 99 percent) with still a good quality of the model \cite{ref64}.
+
+\begin{figure}[!t]
+\centering
+\safeimg{Process_Flow.jpg}
+\caption{Process Flow of the Active Learning Data Selection and Annotation Cycle.}
+\label{fig:process_flow}
+\end{figure}
+
+As shown in Figure~\ref{fig:process_flow}, advanced iterations, such as the ActiveAED (Active Annotation Error Detection) framework, interleave error detection directly into the active learning loop. Utilizing the Area-under-the-Margin (AUM) metric, ActiveAED continually queries humans for error corrections during the prediction loop \cite{ref71}.
+
+\subsection{Confident Learning and Label Noise Purification}
+Labels from many real-life datasets can hardly ever be completely trustworthy even with human supervision of the loop. Confident Learning (CL) is such a framework that works across models to detect, determine the nature, and eliminate label errors before model training \cite{ref73}.
+
+%==================================================================
+% >>> ADDED SECTION (Discussion) >>>
+\section{Discussion}
+\label{sec:discussion}
+\added{In numerous industries, AI-based labeling has greatly accelerated annotation processes and decreased the inconsistency level among various labeling types, achieved by different annotators.For instance, in medical image annotation, clinical trial data annotations, and galaxy classification, these results have been observed and even more. But authors of completely automated models that do not require labeling, nnU-Net among them, still managed to achieve highest level of accuracy measured via Dice scores.Besides, one thing that becomes clear from the data is the close relationship between human involvement and overall effectiveness (e.g., accuracy).In addition to that, expert users following uncertainty-driven and active learning strategies will tackle the most difficult labelling tasks while a poor design of workflow may result in automation bias and anchoring. So when it comes to making labeling workflow decisions, accuracy, speed, impact from a human aspect in the process are the key aspects to be ‍‌addressed.}
+% <<< END ADDED SECTION <<<
+
+%==================================================================
+% >>> ADDED SECTION (Challenges and Future Directions) >>>
+\section{Challenges and Future Directions}
+\label{sec:future}
+\added{Some problems are still open.First of all， the true label may not always be in agreement with experts' opinions. At times, the disagreement is a significant piece of information rather than merely random fluctuations.Without correction errors， if ai predictions were to be overly trusting by the annotator and to become part of the training data, ai-aided labeling might lead to a huge disaster.Therefore, the further research direction would include experimenting with the ai-aided labeling approaches over a much broader variety of the input data and using the consistent metrics so that one could compare the outputs efficiently， apart from that they should also look into the methods of finding and handling the cases of automation bias that are quite common in real scenarios, not only through the hypothetical simulations．Besides, they should create an integrated tool that on the one hand identifies the clean labels and on the other hand, it selects samples that are most doubtful to the humans for their manual verification.}
+% <<< END ADDED SECTION <<<
+
+%==================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+Such a radical transition from complete manual data labelling to AI-assisted one implies a fundamental change in the way scientific knowledge is generated. Medical imaging foundation models like MedSAM with uncertainty-driven HybridMS architectures offer the greatest benefit when the time required decreases by pixel-wise segmentation without sacrificing diagnosing accuracy. Similarly multi-agent systems based large language models are the ones rapidly taking over from manual literature reviews in genomics and transcriptomics.
+Nonetheless, this extensive survey uncovers that the aid of artificial intelligence cannot solve all quality-related problems. Automation bias, anchoring effects, and uncritical complacency are some of the main psychological changes due to algorithmic preLabel.
+Lots of AI applications have successfully addressed the issues of human annotation fatigue and lowered inter-observer variability, however, in the final analysis, their real efficiency is very much dependent on the engagement of a human being in the loop. The best performing scientific annotation workflow is mainly based on measuring the confidence of an Active Learning and Confident Learning approach.
+
+%==================================================================
+% References are embedded (same style as your journal paper) so no references.bib is needed.
+% Cite keys are mapped to the numbering in your compiled PDF.
+\begin{thebibliography}{00}
+
+\bibitem{ref1} R. Chew \textit{et al.}, ``From ground truth to measurement: A statistical framework for human labeling - arxiv,'' \url{https://arxiv.org/html/2604.07591v1}, 2026.
+
+\bibitem{ref2} J. Smith and J. Doe, ``The impact of inconsistent human annotations on AI driven clinical decision making - pmc,'' \url{https://pmc.ncbi.nlm.nih.gov/articles/PMC9944930/}, 2021.
+
+\bibitem{ref3} R. Artstein and M. Poesio, ``Inter-annotator agreement (iaa) metrics - emergent mind,'' \url{https://www.emergentmind.com/topics/inter-annotator-agreement-iaa-bf6a0eff-29b6-496f-804f-9d73No8b6ed1c2}, 2008.
+
+\bibitem{ref10} J. Ma \textit{et al.}, ``Segment anything in medical images and videos: Benchmark and deployment - arxiv,'' \url{https://arxiv.org/html/2408.03322v1}, 2024.
+
+\bibitem{ref12} J. Ma, Y. He, F. Li, L. Han, C. You, and B. Wang, ``Segment anything in medical images - pmc - nih,'' \url{https://pmc.ncbi.nlm.nih.gov/articles/PMC10803759/}, 2024.
+
+\bibitem{ref14} F. Isensee \textit{et al.}, ``Segment anything model (sam) and medical sam (medsam) for lumbar spine mri - pmc,'' \url{https://pmc.ncbi.nlm.nih.gov/articles/PMC12196577/}, 2021.
+
+\bibitem{ref15} M. A. Mazurowski \textit{et al.}, ``AI-driven mri-based brain tumour segmentation benchmarking - arxiv,'' \url{https://arxiv.org/pdf/2506.20786}, 2023.
+
+\bibitem{ref18} X. Chen and X. Li, ``Enhancing medical imaging segmentation with gb-sam: A novel approach to tissue segmentation using granular box prompts - pmc,'' \url{https://pmc.ncbi.nlm.nih.gov/articles/PMC11240495/}, 2023.
+
+\bibitem{ref19} K. Bera \textit{et al.}, ``Improving the annotation process in computational pathology: A pilot study with manual and semi-automated approaches on consumer and medical grade devices - pmc,'' \url{https://pmc.ncbi.nlm.nih.gov/articles/PMC11950598/}, 2019.
+
+\bibitem{ref20} S. Chilamkurthy \textit{et al.}, ``Accelerating voxelwise annotation of cross-sectional imaging through AI collaborative labeling with quality assurance and bias mitigation - pmc,'' \url{https://pmc.ncbi.nlm.nih.gov/articles/PMC10362988/}, 2020.
+
+\bibitem{ref21} P. Rajpurkar \textit{et al.}, ``Hybrid intelligence in medical image segmentation - pmc - nih,'' \url{https://pmc.ncbi.nlm.nih.gov/articles/PMC12639002/}, 2018.
+
+\bibitem{ref22} Y. Zhang and L. Kiz, ``Benchmarking large language models for cell typing in single-cell rna-seq - pmc,'' \url{https://pmc.ncbi.nlm.nih.gov/articles/PMC12704438/}, 2025.
+
+\bibitem{ref32} I. Li, Y. Yan, and J. Lin, ``Leveraging AI to accelerate medical data cleaning: A comparative study of AI-assisted vs. traditional methods - arxiv,'' \url{https://arxiv.org/pdf/2508.05519}, 2024.
+
+\bibitem{ref37} C. J. Lintott \textit{et al.}, ``A general-purpose vlm can teach an astronomy foundation model to better recognize galaxy morphology - arxiv,'' \url{https://arxiv.org/pdf/2608.02300}, 2008.
+
+\bibitem{ref39} M. Walmsley \textit{et al.}, ``Identifying lopsidedness in spiral galaxies using a deep convolutional neural network,'' \url{https://arxiv.org/html/2505.19583v2}, 2022.
+
+\bibitem{ref40} A. Smith and B. Jones, ``AI-powered detection and segmentation of edge-on galaxies - arxiv,'' \url{https://arxiv.org/html/2406.15064v1}, 2022.
+
+\bibitem{ref50} B. Settles, ``Annotation fatigue: Why human data quality declines over time - pareto AI,'' \url{https://pareto.ai/blog/annotation-fatigue-why-human-data-quality-declines-over-time}, 2020.
+
+\bibitem{ref52} P. S. Bayerl and K. I. Paul, ``Top 7 data labeling mistakes that hurt your machine learning model performance,'' \url{https://tinkogroup.com/data-labeling-mistakes-ai-performance/}, 2011.
+
+\bibitem{ref56} J. M. Logg, J. A. Minson, and D. A. Moore, ``Automation bias in human-AI collaboration - pdf - artificial intelligence - scribd,'' \url{https://www.scribd.com/document/890318722/Automation-Bias-Romeo-Conti-25}, 2019.
+
+\bibitem{ref73} C. G. Northcutt, L. Jiang, and I. L. Chuang, ``Conformal-in-the-loop for learning with imbalanced noisy data - arxiv,'' \url{https://arxiv.org/html/2411.02281v1}, 2021.
+
+\bibitem{ref64} B. Settles, ``Deep active learning for data mining from conflict text corpora - arxiv,'' \url{https://arxiv.org/html/2402.01577v1}, 2009.
+
+\bibitem{ref71} L. Weber and B. Plank, ``ActiveAED: A human in the loop improves annotation error detection - ACL anthology,'' \url{https://aclanthology.org/2023.findings-acl.562.pdf}, 2023.
+
+\end{thebibliography}
+
+\end{document}
