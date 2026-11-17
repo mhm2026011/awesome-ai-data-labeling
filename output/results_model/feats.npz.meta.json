@@ -1,0 +1,10 @@
+{
+  "device": "cuda",
+  "torch": "2.14.1+cu130",
+  "torchvision": "0.29.1+cu130",
+  "size": 224,
+  "train_seconds": 120.12203431129456,
+  "test_seconds": 23.371893405914307,
+  "n_train": 50000,
+  "n_test": 10000
+}

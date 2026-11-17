@@ -1,0 +1,14 @@
+chosen C 0.1 {0.001: 0.9162011173184358, 0.01: 0.9608938547486033, 0.1: 0.9664804469273743}
+test items 899 model-only acc 0.9608 ECE 0.0933
+reviewer              arm  budget    acc  diff_vs_random  ci_lo  ci_hi
+ perfect           random     0.2 0.9677             NaN    NaN    NaN
+ perfect          entropy     0.2 0.9966          0.0288 0.0207 0.0385
+ perfect           margin     0.2 0.9959          0.0281 0.0201 0.0378
+ perfect least_confidence     0.2 0.9962          0.0285 0.0202 0.0383
+ perfect           oracle     0.2 1.0000          0.0323 0.0234 0.0429
+  single           random     0.2 0.9471             NaN    NaN    NaN
+  single          entropy     0.2 0.9771          0.0300 0.0214 0.0399
+  single           margin     0.2 0.9770          0.0299 0.0206 0.0398
+  single least_confidence     0.2 0.9773          0.0303 0.0210 0.0403
+  single           oracle     0.2 0.9791          0.0320 0.0231 0.0409
+G-2 closed form holds on digits for all budgets

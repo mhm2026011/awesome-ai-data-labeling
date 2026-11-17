@@ -1,0 +1,6 @@
+data_c10h/
+cifar_data/
+*.npz
+*.npy
+__pycache__/
+results_model/

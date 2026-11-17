@@ -1,0 +1,168 @@
+[cell 2] ---
+python 3.13.17
+torch NOT available: No module named 'torch'
+numpy 2.5.3 | pandas 3.0.5 | sklearn 1.9.1
+[cell 3] ---
+
+Cloning into 'cifar-10h'...
+
+
+CIFAR-10H (also referred to as CIFAR10H) is an accompanying human
+label dataset for the 10,000-image test set of CIFAR-10,
+originally created as a new benchmark for object classification:
+
+    Peterson, J.*, Battleday, R.*, Griffiths, T., & Russakovsky, O. (2019). 
+    Human uncertainty makes classification more robust.
+    In Proceedings of the IEEE International Conference on Computer Vision.
+    * equal contribution
+
+data_c10h:
+total 796
+drwxr-xr-x 3 root root   4096 Nov 17 07:12 .
+drwxr-xr-x 6 root root   4096 Nov 17 07:12 ..
+-rw-r--r-- 1 root root 800128 Nov 17 07:12 cifar10h-counts.npy
+drwxr-xr-x 2 root root   4096 Nov 17 07:12 raw
+
+data_c10h/raw:
+total 42356
+drwxr-xr-x 2 root root     4096 Nov 17 07:12 .
+drwxr-xr-x 3 root root     4096 Nov 17 07:12 ..
+-rw-r--r-- 1 root root 43364034 Aug 24  2020 cifar10h-raw.csv
+
+9b36b4550349af56c79083356312eb4af856cc5fd3caf1f669d40b9d0bbb69ff  data_c10h/cifar10h-counts.npy
+c6d967d475f56151f3587521ec91a4b4837ab0e57638c554e8bee3c98d5b11e3  data_c10h/raw/cifar10h-raw.csv
+
+[cell 5] ---
+[cell 6] ---
+[cell 7] ---
+[cell 8] ---
+[cell 9] ---
+[cell 10] ---
+[cell 11] ---
+[cell 12] ---
+[cell 13] ---
+[cell 14] SKIPPED (needs torch)
+[cell 15] ---
+[cell 16] ---
+[cell 17] ---
+[cell 18] ---
+[cell 20] ---
+e_G5_bootstrap_known_difference_and_null
+PASS test_gate_G6_determinism
+PASS test_gate_H1_entropy_beats_random_perfect_reviewer_synthetic
+PASS test_least_conf_order_known
+PASS test_margin_order_known
+PASS test_oracle_reviews_errors_first
+PASS test_random_arm_perfect_reviewer_gain_near_expected
+PASS test_select_sizes_and_unique
+PASS test_select_top_uncertain
+PASS test_tie_breaking_is_random_but_seeded
+PASS test_features_deterministic_and_batch_invariant
+PASS test_features_shape_flat_and_edge
+PASS test_safe_loader_blocks_code_execution
+PASS test_safe_loader_reads_valid_batch
+
+19 passed, 0 failed
+
+[cell 22] ---
+ "mean": 0.9544196999999999,
+    "sd": 0.0018657070436627456,
+    "p2_5": 0.9507975,
+    "p97_5": 0.9582
+  },
+  "panel_plurality_acc_vs_original": 0.9921,
+  "per_annotator": {
+    "n_annotators": 2555,
+    "items_per_annotator_min": 200,
+    "items_per_annotator_median": 200.0,
+    "items_per_annotator_max": 200,
+    "acc_mean": 0.9523600782778864,
+    "acc_sd": 0.02871135159222372,
+    "acc_p5": 0.905,
+    "acc_p50": 0.96,
+    "acc_p95": 0.985
+  },
+  "item_level": {
+    "mean": 0.9523460386492748,
+    "items_below_50pct": 122,
+    "items_below_80pct": 609,
+    "items_all_correct": 4392
+  }
+}
+
+[cell 24] SKIPPED (needs torch)
+[cell 25] SKIPPED (needs torch)
+[cell 27] ---
+[cell 29] ---
+7    0.7221        0.1210  0.1162  0.1258          0.0496 0.0451 0.0540
+  single least_confidence     0.2 0.7234    0.7198    0.7257        0.1244  0.1189  0.1301          0.0530 0.0477 0.0580
+  single           oracle     0.2 0.7855    0.7824    0.7873        0.1865  0.1820  0.1914          0.1151 0.1117 0.1187
+{
+  "C": 0.1,
+  "C_grid_val_acc": {
+    "0.01": 0.5841,
+    "0.1": 0.5907,
+    "1.0": 0.5895
+  },
+  "ece_seed0": 0.010577659401297568,
+  "model_acc_per_seed": [
+    0.6012,
+    0.5991,
+    0.6003,
+    0.6021,
+    0.6022,
+    0.6008,
+    0.5966,
+    0.6004,
+    0.6003,
+    0.5992
+  ]
+}
+
+[cell 31] ---
+model-only accuracy per seed (min / mean / max): 0.5966 / 0.6002 / 0.6022
+chosen C: 0.1 | calibration error (seed 0): 0.0106
+manual single-annotator accuracy (1000 draws): mean 0.9523, 2.5-97.5%: 0.9488-0.9558
+annotator accuracy SD: 0.0287
+
+=== H2 (primary): single reviewer, entropy minus random, b=0.20 ===
+difference 0.0477, 95% paired bootstrap interval [0.0424, 0.0530]
+interval excludes zero on the positive side
+
+H3 check: does single-annotator review ever fall below model-only?
+                 arm  budget     acc  diff_vs_none  ci0_lo  ci0_hi
+22            random    0.05  0.6182        0.0180  0.0170  0.0190
+23           entropy    0.05  0.6334        0.0332  0.0303  0.0362
+24            margin    0.05  0.6319        0.0317  0.0300  0.0336
+25  least_confidence    0.05  0.6341        0.0339  0.0312  0.0367
+27            random    0.10  0.6351        0.0349  0.0334  0.0364
+28           entropy    0.10  0.6623        0.0621  0.0580  0.0664
+29            margin    0.10  0.6622        0.0620  0.0592  0.0651
+30  least_confidence    0.10  0.6651        0.0648  0.0611  0.0688
+32            random    0.20  0.6710        0.0708  0.0685  0.0731
+33           entropy    0.20  0.7187        0.1185  0.1129  0.1245
+34            margin    0.20  0.7202        0.1200  0.1151  0.1248
+35  least_confidence    0.20  0.7233        0.1231  0.1176  0.1288
+37            random    0.40  0.7402        0.1400  0.1361  0.1442
+38           entropy    0.40  0.8146        0.2144  0.2070  0.2219
+39            margin    0.40  0.8212        0.2209  0.2141  0.2284
+40  least_confidence    0.40  0.8233        0.2231  0.2161  0.2305
+   reviewer               arm  budget     acc  seed_min  seed_max  diff_vs_none  ci0_lo  ci0_hi  diff_vs_random   ci_lo   ci_hi
+0         -              none     0.0  0.6002    0.5966    0.6022           NaN     NaN     NaN             NaN     NaN     NaN
+1         -            manual     1.0  0.9514    0.9490    0.9527           NaN     NaN     NaN             NaN     NaN     NaN
+12  perfect            random     0.2  0.6809    0.6790    0.6846        0.0807  0.0782  0.0831             NaN     NaN     NaN
+13  perfect           entropy     0.2  0.7330    0.7308    0.7351        0.1328  0.1267  0.1390          0.0521  0.0464  0.0577
+14  perfect            margin     0.2  0.7333    0.7300    0.7343        0.1331  0.1279  0.1381          0.0524  0.0478  0.0571
+15  perfect  least_confidence     0.2  0.7373    0.7342    0.7391        0.1370  0.1310  0.1431          0.0564  0.0508  0.0618
+16  perfect            oracle     0.2  0.8002    0.7966    0.8022        0.2000  0.1951  0.2051          0.1193  0.1159  0.1233
+32   single            random     0.2  0.6710    0.6685    0.6755        0.0708  0.0685  0.0731             NaN     NaN     NaN
+33   single           entropy     0.2  0.7187    0.7153    0.7212        0.1185  0.1129  0.1245          0.0477  0.0424  0.0530
+34   single            margin     0.2  0.7202    0.7171    0.7226        0.1200  0.1151  0.1248          0.0492  0.0448  0.0536
+35   single  least_confidence     0.2  0.7233    0.7200    0.7257        0.1231  0.1176  0.1288          0.0523  0.0470  0.0573
+36   single            oracle     0.2  0.7862    0.7838    0.7891        0.1860  0.1814  0.1909          0.1152  0.1118  0.1189
+[cell 32] ---
+[cell 34] ---
+
+
+download manually from the file browser: No module named 'google.colab'
+NOTEBOOK FLOW DONE
